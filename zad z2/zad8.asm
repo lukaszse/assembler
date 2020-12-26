@@ -7,7 +7,7 @@ DOSSEG
     NEWLINE             db      ENTER_KEY, CARRIAGE_RETURN, '$'
     PASSWD_OK           db      ENTER_KEY, CARRIAGE_RETURN, 'Password OK$'
     PASSWD_FAIL         db      ENTER_KEY, CARRIAGE_RETURN, 'Password Fail$'
-    PASSWD_RETURN       db      ENTER_KEY, CARRIAGE_RETURN, 'Password you typed is: $'
+    PASSWD_RETURN       db      ENTER_KEY, CARRIAGE_RETURN, 'Password you typed is (reversed): $'
     BUFOR               db      17 DUP('$')
 	
 	.code
