@@ -2,35 +2,39 @@ DOSSEG
 	.model small
 	.stack 300h
     .data
-    ESC_KEY     equ     1Bh
-    UP_KEY      equ     48h
-    DOWN_KEY    equ     50h
-    LEFT_KEY    equ     4bh
-    RIGHT_KEY   equ     4dh
-    SPACE_KEY   equ     20h
-    F1_KEY      equ     3bh
-    F2_KEY      equ     3ch
-    F3_KEY      equ     3dh
-    F4_KEY      equ     3eh
-    F5_KEY      equ     3fh
-    F6_KEY      equ     40h
-    F7_KEY      equ     41h
-    F8_KEY      equ     42h
-    F9_KEY      equ     43h
-    RED         db      27, "[31m$"
-    BLUE        db      27, "[34m$"
-    YELLOW      db      27, "[33m$"
-    GREEN       db      27, "[32m$"
-    PINK        db      27, "[35m$"
-    LBLUE       db      27, "[36m$"
-    GREY        db      27, "[37m$"
-    BLACK       db      27, "[30m$"
-    BRIGHT_COL  db      27, "[1m$"    
-    DIM_COL     db      27, "[2m$"
-    CLS         db      27, "[2J$"    
-    RESET_COL   db      27, "[0m$"
-    MODE        db      1   
-    COURSOR_MSG db      "K($"
+    CARRIAGE_RETURN     equ     0Ah
+    ESC_KEY             equ     1Bh
+    UP_KEY              equ     48h
+    DOWN_KEY            equ     50h
+    LEFT_KEY            equ     4bh
+    RIGHT_KEY           equ     4dh
+    SPACE_KEY           equ     20h
+    F1_KEY              equ     3bh
+    F2_KEY              equ     3ch
+    F3_KEY              equ     3dh
+    F4_KEY              equ     3eh
+    F5_KEY              equ     3fh
+    F6_KEY              equ     40h
+    F7_KEY              equ     41h
+    F8_KEY              equ     42h
+    F9_KEY              equ     43h
+    RED                 db      27, "[31m$"
+    BLUE                db      27, "[34m$"
+    YELLOW              db      27, "[33m$"
+    GREEN               db      27, "[32m$"
+    PINK                db      27, "[35m$"
+    LBLUE               db      27, "[36m$"
+    GREY                db      27, "[37m$"
+    BLACK               db      27, "[30m$"
+    BRIGHT_COL          db      27, "[1m$"    
+    DIM_COL             db      27, "[2m$"
+    CLS                 db      27, "[2J$"    
+    RESET_COL           db      27, "[0m$"
+    MODE                db      1   
+    NUMBER              db      4 DUP('$') 
+    EMPTY_STRING_25     db      "                        $"
+    OPEN                db      "K($"
+    CLOSE_BRACKET       db      ")    $"
             
 	.code
 start:
@@ -40,8 +44,8 @@ start:
     lea dx, [CLS]               ; wyczyszczenie ekranu
     int 21h
     mov ah, 2h              
-    mov dh, 2                  ; usttawienie wiersza 
-    mov dl, 2                  ; ustawienie kolumny
+    mov dh, 9                  ; usttawienie wiersza 
+    mov dl, 40                  ; ustawienie kolumny
     int 10h
     loop1:
         call coursor_position   ; wywołanie procedury wypisującej pozycje kursora w dolnym lewym rogu ekranu
@@ -198,7 +202,6 @@ start:
         call read
         cmp dl, 78 
         je jump_over_right                ; wroc do loop1 jesli dl<=79
-        mov ch, dh
         inc dl
         mov ah, 2h
         int 10h
@@ -283,34 +286,34 @@ start:
         
 ; procedura odczytu pozycji kursora
     read proc   
-        mov ah, 03h             ; funkcja odczytu pozycji 
-        int 10h                 ; wywołanie przerwania BIOS
-        ret                     ; powrót
+        mov ah, 03h                 ; funkcja odczytu pozycji 
+        int 10h                     ; wywołanie przerwania BIOS
+        ret                         ; powrót
     read endp
 
 ; procedura ustawiania koloru tła
     set_color_bright proc
-        mov ah, 09h             ; wpisz nr funkcji do al
-        push dx                 ; odłóż kod koloru na stos  
-        lea dx, [RESET_COL]     ; reset ustawienia kolorów
-        int 21h                 ; wywołaj funkcje przez przerwanie DOS  
-        lea dx, [BRIGHT_COL]    ; ustaw jasne kolory
-        int 21h                 ; wywołaj funkcje przez przerwanie DOS
-        pop dx                  ; ponbierz kod koloru ze stosu
-        int 21h                 ; wywołaj funkcje przez przerwanie DOS
-        ret                     ; powróc
+        mov ah, 09h                 ; wpisz nr funkcji do al
+        push dx                     ; odłóż kod koloru na stos  
+        lea dx, [RESET_COL]         ; reset ustawienia kolorów
+        int 21h                     ; wywołaj funkcje przez przerwanie DOS  
+        lea dx, [BRIGHT_COL]        ; ustaw jasne kolory
+        int 21h                     ; wywołaj funkcje przez przerwanie DOS
+        pop dx                      ; ponbierz kod koloru ze stosu
+        int 21h                     ; wywołaj funkcje przez przerwanie DOS
+        ret                         ; powróc
     set_color_bright endp
     
     set_color_dim proc
-        mov ah, 09h             ; wpisz nr funkcji do al
-        push dx                 ; odłóż kod koloru na stos
-        lea dx, [RESET_COL]     ; reset ustawienia kolorów
-        int 21h                 ; wywołaj funkcje przez przerwanie DOS
-        lea dx, [DIM_COL]       ; ustaw ciemny kolory
-        int 21h                 ; wywołaj funkcje przez przerwanie DOS
-        pop dx                  ; ponbierz kod koloru ze stosu
-        int 21h                 ; wywołaj funkcje przez przerwanie DOS
-        ret                     ; powróc
+        mov ah, 09h                 ; wpisz nr funkcji do al
+        push dx                     ; odłóż kod koloru na stos
+        lea dx, [RESET_COL]         ; reset ustawienia kolorów
+        int 21h                     ; wywołaj funkcje przez przerwanie DOS
+        lea dx, [DIM_COL]           ; ustaw ciemny kolory
+        int 21h                     ; wywołaj funkcje przez przerwanie DOS
+        pop dx                      ; ponbierz kod koloru ze stosu
+        int 21h                     ; wywołaj funkcje przez przerwanie DOS
+        ret                         ; powróc
     set_color_dim endp
 
 ; procedura rysowania 
@@ -321,7 +324,7 @@ start:
         jz no_draw
         xor dx, dx
         mov ah, 02h
-        mov dl, 219             ; rysuj tło
+        mov dl, 219                 ; rysuj tło
         int 21h
         call read 
         mov ah, 2h
@@ -334,33 +337,80 @@ start:
     
 ; procedura wypisania pozycji kursora
     coursor_position proc
-        call read
-        xor ax, ax
-        mov bx, dx
         xor dx, dx
+        call read
+        push dx
         mov ah, 2h
         mov dh, 24
-        mov dl, 2
+        mov dl, 02
         int 10h
-        call draw
+        mov ah, 9h
+        lea dx, [EMPTY_STRING_25]
+        int 21h
+        mov ah, 2h
+        mov dh, 24
+        mov dl, 02
+        int 10h
         mov ah, 09h
-        lea dx, [COURSOR_MSG]
+        lea dx, [OPEN]
+        int 21h
+        xor ax, ax
+        pop dx
+        mov al, dh
+        push dx
+        call ascii_to_number
+        lea dx, [NUMBER]
+        mov ah, 09h
         int 21h
         mov ah, 02h
-        mov dx, bx
-        add dl, 48
-        int 21h
         mov dl, ','
         int 21h
-        mov dl, dh
-        add dl, 48
+        xor ax, ax
+        pop dx
+        mov al, dl
+        push dx
+        call ascii_to_number
+        lea dx, [NUMBER]
+        mov ah, 09h
         int 21h
-        mov dl, ')'
+        mov ah, 09h
+        lea dx, [CLOSE_BRACKET]
         int 21h
-        mov dx, bx
+        pop dx
         mov ah, 02h
         int 10h
+
         ret
     coursor_position endp
+    
+    ascii_to_number proc
+        xor cx, cx
+        mov bx, 10                  ; dzielnik
+        petla:
+            xor dx, dx              ; zerowanie dx przed dzieleniem
+            div bx                  ; dzielenie ax/bx
+            add dx, 48              ; dodajemy 48 aby uzyskać nr w kodzie ASCII 
+            push dx                 ; dodajemy dx na stos
+            inc cx                  ; inkrementacja licznika
+            cmp ax, 0               
+        jnz petla
+        push cx
 
+        mov cx, 4
+        clear_array:
+            mov bx, cx
+            mov [NUMBER+bx], '$'
+        loop clear_array
+
+        pop cx
+        xor si, si
+        save_number:
+            mov bx, si
+            pop dx
+            mov [NUMBER+bx], dl
+            inc si
+        loop save_number
+        ret
+    ascii_to_number endp
+   
 end start

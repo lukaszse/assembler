@@ -196,7 +196,6 @@ start:
         call read
         cmp dl, 78 
         je jump_over_right                ; wroc do loop1 jesli dl<=79
-        mov ch, dh
         inc dl
         mov ah, 2h
         int 10h

@@ -3,46 +3,40 @@ org 100h
 assume cs:program
 
 start:
-        mov ax, 0               ; znak w kodzie ASCII od którego zostanie uruchomione wyświetlanie
-        mov cx, 256             ; ilość znaków do wyświetlenia
-        mov bx, 10             ; dzielnik           
+        mov ax, 65                      ; znak w kodzie ASCII od którego zostanie uruchomione wyświetlanie
+        mov cx, 10                      ; ilość znaków do wyświetlenia
+        mov bx, 10                       ; dzielnik           
 
 petla:
+        push cx
         push ax
-        xor dx, dx              ; zerowanie dx przed dzieleniem
-        div bx                  ; dzielenie ax/bx
-        add dx, 48              ; dodajemy 48 aby uzyskać nr w kodzie ASCII 
-        push dx                 ; dodajemy dx na stos
+        xor cx, cx
 
-        xor dx, dx              ; zerowanie dx przed dzieleniem
-        div bx                  ; dzielenie ax/bx
-        add dx, 48              ; dodajemy 48 aby uzyskać nr w kodzie ASCII  
-        push dx                 ; dodajemy dx na stos
+        ; algorytm konwersji kodu ASCII na liczbe
+        ascii_to_number:
+                xor dx, dx              ; zerowanie dx przed dzieleniem
+                div bx                  ; dzielenie ax/bx
+                add dx, 48              ; dodajemy 48 aby uzyskać nr w kodzie ASCII 
+                push dx                 ; dodajemy dx na stos
+                inc cx                  ; inkrementacja licznika
+                cmp ax, 0               
+        jnz ascii_to_number
         
-        xor dx, dx              ; zerowanie dx przed dzieleniem
-        div bx                  ; dzielenie ax/bx
-        add dx, 48              ; dodajemy 48 aby uzyskać nr w kodzie ASCII 
-        mov ah, 02h             ; do rejestru ah wpisujemy kod funkcji  odpowiedzialnej za wyswietlenie znaku
-        int 21h                 ; uruchamiamy przerwanie DOS
-
-        xor dx, dx
-        pop dx
-        mov ah, 02h             ; do rejestru ah wpisujemy kod funkcji  odpowiedzialnej za wyswietlenie znaku
-        int 21h                 ; uruchamiamy przerwanie DOS
+        mov ah, 2h                      ; funkcja wyświetlenia znku
+        wystwietl:
+                pop dx
+                int 21h
+        loop wystwietl
         
-        pop dx
-        mov ah, 02h             ; do rejestru ah wpisujemy kod funkcji  odpowiedzialnej za wyswietlenie znaku
-        int 21h                 ; uruchamiamy przerwanie DOS
-
-        mov dx, '['
-        int 21h                 ; uruchamiamy przerwanie DOS
+        mov dl, '['
+        int 21h                         ; uruchamiamy przerwanie DOS
         
         pop dx
-        int 21h                 ; uruchamiamy przerwanie DOS
+        int 21h                         ; uruchamiamy przerwanie DOS
         push dx
 
-        mov dx, ']'
-        int 21h                 ; uruchamiamy przerwanie DOS
+        mov dl, ']'
+        int 21h                         ; uruchamiamy przerwanie DOS
         
         ; drukowanie znaku nowej linii, powrot karetki
         mov dl, 0Ah
@@ -50,9 +44,9 @@ petla:
         mov dl, 0Dh
         int 21h
 
-        xor ax, ax
         pop ax
         inc ax
+        pop cx
 
 loop petla                ; jesli cx>0 wracamy do etykiety petla
 
