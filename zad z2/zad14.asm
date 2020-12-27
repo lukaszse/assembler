@@ -11,16 +11,11 @@ DOSSEG
     BLUE        db      27, "[34m$"
     YELLOW      db      27, "[33m$"
     GREEN       db      27, "[32m$"
-    PINK        db      27, "[35m$"
-    LBLUE       db      27, "[36m$"
-    GREY        db      27, "[37m$"
     BRIGHT_COL  db      27, "[1m$"    
     DIM_COL     db      27, "[2m$"
     CLS         db      27, "[2J$"    
     RESET_COL   db      27, "[0m$"   
 
-    text3        db " Bright Yellow on Black$"
- 
 	
 	.code
 start:
