@@ -13,6 +13,7 @@ start:
     mov ax,@data
     mov ds,ax               ; ustaw segment danych
     loop1:
+        call read
         xor ax, ax
         mov ah, 8h 			; funkcja odczytu znaku z klawiatury bez echa i zapisu do rejestru al
         int 21h				; przerwanie dos
@@ -33,26 +34,32 @@ start:
         je right
     jmp loop1               ; jeśli wciśnięty klawisz inny niż enter skocz do etykiety petla
 
+; procedura odczytu pozycji kursora
+    read proc   
+        mov ah, 03h         ; funkcja odczytu pozycji 
+        int 10h             ; wywołanie przerwania BIOS
+        ret                 ; powrót
+    read endp
 ; wyswietlenie poszczególnych znaków
-    up:
-        mov dl, 'w'
+    up: 
+        dec dh
         mov ah, 2h
-        int 21h
+        int 10h
         jmp loop1
     down:
-        mov dl, 'z'
+        inc dh
         mov ah, 2h
-        int 21h
+        int 10h
         jmp loop1
     left:
-        mov dl, 'a'
+        dec dl
         mov ah, 2h
-        int 21h
+        int 10h
         jmp loop1
     right:
-        mov dl, 'd'
+        inc dl
         mov ah, 2h
-        int 21h
+        int 10h
         jmp loop1
 
     koniec:
