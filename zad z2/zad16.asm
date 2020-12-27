@@ -26,7 +26,7 @@ DOSSEG
     DIM_COL     db      27, "[2m$"
     CLS         db      27, "[2J$"    
     RESET_COL   db      27, "[0m$"   
-
+            
 	.code
 start:
     mov ax,@data
@@ -45,7 +45,6 @@ start:
         je koniec               ; skok na koniec jesli ESC
         cmp al, 00h             ; porównanie czy al = 0     
         jnz loop1               ; jeśli nie 0, skok do loop1
-        xor ax, ax              ; zerowanie ax
         mov ah, 8h 			    ; funkcja odczytu znaku z klawiatury bez echa i zapisu do rejestru al
         int 21h				    ; przerwanie dos
         cmp al, UP_KEY          ; skok do up jeśli wcisnieto strzalke do gory
@@ -78,69 +77,149 @@ start:
         mov	ax, 4c00h		    ; funkja zakończenia programu
         int	21h	
 
-; rysowanie za pomocą kursora:
+; obsługa przycsików klawiatury - strzałki i klawisze fu:
     up:
-        call read 
+        call up_proc
+        jmp loop1
+    down:
+        call down_proc
+        jmp loop1
+    left:
+        call left_proc
+        jmp loop1
+    right:
+        call right_proc
+        jmp loop1
+    
+    F1:
+        call F1_proc
+        jmp loop1
+        
+    F2:
+        call F2_proc
+        jmp loop1
+
+    F3:
+        call F3_proc
+        jmp loop1
+        
+    F4:
+        call F4_proc
+        jmp loop1   
+
+    F5:
+        call F5_proc
+        jmp loop1
+        
+    F6:
+        call F6_proc
+        jmp loop1
+
+    F7:
+        call F7_proc
+        jmp loop1
+        
+    F8:
+        call F8_proc
+        jmp loop1       
+
+; procedury sterowania kursorem
+    up_proc proc
+        call read
+        cmp dh, 0
+        jz jump_over_up                ; wróc do loop1 jeśli dh=0
         mov ah, 2h
         dec dh
         int 10h
         call draw
-        jmp loop1
-    down:
+        jump_over_up:
+        ret
+    up_proc endp
+
+    down_proc proc
         call read
+        cmp dh, 24
+        jge jump_over_down                ; wroc do loop1 jesli dh<=25
         mov ah, 2h
         inc dh
         int 10h
         call draw
-        jmp loop1
-    left:
+        jump_over_down:
+        ret
+    down_proc endp
+
+    left_proc proc
         call read
+        cmp dl, 0
+        jz jump_over_left                ; wroc do loop1 jesli dl=0
         dec dl
         mov ah, 2h
         int 10h
         call draw
-        jmp loop1
-    right:
+        jump_over_left:
+        ret
+    left_proc endp
+
+    right_proc proc
         call read
+        cmp dl, 78 
+        jge jump_over_right                ; wroc do loop1 jesli dl<=79
         inc dl
         mov ah, 2h
         int 10h
         call draw
-        jmp loop1
+        jump_over_right:
+        ret
+    right_proc endp
 
-; zmiana kolorów:
-    F1:
+; procedury zmiany kolorów:
+    F1_proc proc
         lea dx, [GREY]
         call set_color_dim
-        jmp loop1
-    F2:
+        ret
+    F1_proc endp
+
+    F2_proc proc
         lea dx, [BLUE]
         call set_color_dim
-        jmp loop1
-    F3:
+        ret
+    F2_proc endp
+
+    F3_proc proc
         lea dx, [GREEN]
         call set_color_dim
-        jmp loop1
-    F4:
+        ret
+    F3_proc endp
+     
+    F4_proc proc
         lea dx, [BLUE]
         call set_color_bright
-        jmp loop1
-    F5:
+        ret
+    F4_proc endp
+
+    F5_proc proc
         lea dx, [RED]
         call set_color_dim
-        jmp loop1
-    F6:
+        ret
+    F5_proc endp
+
+    F6_proc proc
         lea dx, [PINK]
         call set_color_bright
-        jmp loop1
-    F7:
+        ret
+    F6_proc endp
+
+    F7_proc proc
         lea dx, [YELLOW]
         call set_color_dim
-        jmp loop1
-    F8:
+        ret
+    F7_proc endp
+    
+    F8_proc proc
         lea dx, [GREY]
         call set_color_bright
-        jmp loop1
+        ret
+    F8_proc endp
 
         
 ; procedura odczytu pozycji kursora

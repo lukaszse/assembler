@@ -7,6 +7,7 @@ DOSSEG
     DOWN_KEY    equ     50h
     LEFT_KEY    equ     4bh
     RIGHT_KEY   equ     4dh
+    SPACE_KEY   equ     20h
     F1_KEY      equ     3bh
     F2_KEY      equ     3ch
     F3_KEY      equ     3dh
@@ -15,6 +16,7 @@ DOSSEG
     F6_KEY      equ     40h
     F7_KEY      equ     41h
     F8_KEY      equ     42h
+    F9_KEY      equ     43h
     RED         db      27, "[31m$"
     BLUE        db      27, "[34m$"
     YELLOW      db      27, "[33m$"
@@ -22,11 +24,13 @@ DOSSEG
     PINK        db      27, "[35m$"
     LBLUE       db      27, "[36m$"
     GREY        db      27, "[37m$"
+    BLACK       db      27, "[30m$"
     BRIGHT_COL  db      27, "[1m$"    
     DIM_COL     db      27, "[2m$"
     CLS         db      27, "[2J$"    
-    RESET_COL   db      27, "[0m$"   
-
+    RESET_COL   db      27, "[0m$"
+    MODE        db      1   
+            
 	.code
 start:
     mov ax,@data
@@ -43,9 +47,10 @@ start:
         int 21h				    ; przerwanie dos
         cmp al, ESC_KEY         ; porownanie wpisanego znaku z kodem klawisza ESC
         je koniec               ; skok na koniec jesli ESC
+        cmp al, SPACE_KEY       
+        je SPACE                ; skok do estykiety SPACE (wywołanie zmiany trybu)
         cmp al, 00h             ; porównanie czy al = 0     
         jnz loop1               ; jeśli nie 0, skok do loop1
-        xor ax, ax              ; zerowanie ax
         mov ah, 8h 			    ; funkcja odczytu znaku z klawiatury bez echa i zapisu do rejestru al
         int 21h				    ; przerwanie dos
         cmp al, UP_KEY          ; skok do up jeśli wcisnieto strzalke do gory
@@ -72,75 +77,206 @@ start:
         je F7
         cmp al, F8_KEY
         je F8
+        cmp al, F9_KEY
+        je F9
     jmp loop1                   ; jeśli wciśnięty klawisz inny niż enter skocz do etykiety petla
     
     koniec:
         mov	ax, 4c00h		    ; funkja zakończenia programu
         int	21h	
 
-; rysowanie za pomocą kursora:
+; obsługa przycsików klawiatury - strzałki i klawisze fu:
     up:
-        call read 
+        call up_proc
+        jmp loop1
+    down:
+        call down_proc
+        jmp loop1
+    left:
+        call left_proc
+        jmp loop1
+    right:
+        call right_proc
+        jmp loop1
+    
+    SPACE:
+        call space_proc
+        jmp loop1       
+    
+    F1:
+        call F1_proc
+        jmp loop1
+        
+    F2:
+        call F2_proc
+        jmp loop1
+
+    F3:
+        call F3_proc
+        jmp loop1
+        
+    F4:
+        call F4_proc
+        jmp loop1   
+
+    F5:
+        call F5_proc
+        jmp loop1
+        
+    F6:
+        call F6_proc
+        jmp loop1
+
+    F7:
+        call F7_proc
+        jmp loop1
+        
+    F8:
+        call F8_proc
+        jmp loop1
+
+    F9:
+        call F9_proc
+        jmp loop1
+
+
+; procedury sterowania kursorem
+    up_proc proc
+        call read
+        cmp dh, 0
+        jz jump_over_up                ; wróc do loop1 jeśli dh=0
         mov ah, 2h
         dec dh
         int 10h
         call draw
-        jmp loop1
-    down:
+        ret
+        jump_over_up:
+            mov dh, 24
+            mov ah, 2h
+            int 10h
+            call draw
+            ret
+    up_proc endp
+
+    down_proc proc
         call read
+        cmp dh, 24
+        jge jump_over_down                ; wroc do loop1 jesli dh<=25
         mov ah, 2h
         inc dh
         int 10h
         call draw
-        jmp loop1
-    left:
+        ret
+        jump_over_down:
+            mov dh, 0
+            mov ah, 2h
+            int 10h
+            call draw
+            ret
+    down_proc endp
+
+    left_proc proc
         call read
+        cmp dl, 0
+        jz jump_over_left                ; wroc do loop1 jesli dl=0
         dec dl
         mov ah, 2h
         int 10h
         call draw
-        jmp loop1
-    right:
+        ret
+        jump_over_left:
+            mov dl, 78
+            mov ah, 2h
+            int 10h
+            call draw
+            ret
+    left_proc endp
+
+    right_proc proc
         call read
+        cmp dl, 78 
+        je jump_over_right                ; wroc do loop1 jesli dl<=79
+        mov ch, dh
         inc dl
         mov ah, 2h
         int 10h
         call draw
-        jmp loop1
+        ret
+        jump_over_right:
+            mov dl, 0
+            mov ah, 2h
+            int 10h
+            call draw
+            ret
+    right_proc endp
 
-; zmiana kolorów:
-    F1:
+; procedury zmiany kolorów:
+    F1_proc proc
         lea dx, [GREY]
         call set_color_dim
-        jmp loop1
-    F2:
+        ret
+    F1_proc endp
+
+    F2_proc proc
         lea dx, [BLUE]
         call set_color_dim
-        jmp loop1
-    F3:
+        ret
+    F2_proc endp
+
+    F3_proc proc
         lea dx, [GREEN]
         call set_color_dim
-        jmp loop1
-    F4:
+        ret
+    F3_proc endp
+     
+    F4_proc proc
         lea dx, [BLUE]
         call set_color_bright
-        jmp loop1
-    F5:
+        ret
+    F4_proc endp
+
+    F5_proc proc
         lea dx, [RED]
         call set_color_dim
-        jmp loop1
-    F6:
+        ret
+    F5_proc endp
+
+    F6_proc proc
         lea dx, [PINK]
         call set_color_bright
-        jmp loop1
-    F7:
+        ret
+    F6_proc endp
+
+    F7_proc proc
         lea dx, [YELLOW]
         call set_color_dim
-        jmp loop1
-    F8:
+        ret
+    F7_proc endp
+    
+    F8_proc proc
         lea dx, [GREY]
         call set_color_bright
-        jmp loop1
+        ret
+    F8_proc endp
+
+    F9_proc proc
+        lea dx, [BLACK]
+        call set_color_dim
+        ret
+    F9_proc endp
+
+    space_proc proc
+        mov bl, byte ptr ds:[MODE]
+        cmp bl, 0
+        jnz set_to_zero
+            mov bx, 1
+            mov byte ptr ds:[MODE], bl
+            ret
+        set_to_zero:
+            xor bx, bx
+            mov byte ptr ds:[MODE], bl
+            ret
+    space_proc endp
 
         
 ; procedura odczytu pozycji kursora
@@ -177,14 +313,19 @@ start:
 
 ; procedura rysowania 
     draw proc
+        mov bl, byte ptr ds:[MODE]
+        cmp bx, 0
+        jz no_draw
         xor dx, dx
         mov ah, 02h
-        mov dl, 219         ; rysuj tło
+        mov dl, 219             ; rysuj tło
         int 21h
         call read 
         mov ah, 2h
         dec dl
         int 10h
+        ret
+        no_draw:
         ret
     draw endp
 
