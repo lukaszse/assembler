@@ -8,15 +8,31 @@ DOSSEG
     LEFT_KEY    equ     4bh
     RIGHT_KEY   equ     4dh
     RED         db      27, "[31m$"
-    RED_BG      db      27, "[41m$"
-    BLUE_BG     db      27, "[44m$"
-    YELLOW_BG   db      27, "[43m$"
-    GREEN_BG    db      27, "[42m$"
+    BLUE        db      27, "[34m$"
+    YELLOW      db      27, "[33m$"
+    GREEN       db      27, "[32m$"
+    PINK        db      27, "[35m$"
+    LBLUE       db      27, "[36m$"
+    GREY        db      27, "[37m$"
+    BRIGHT_COL  db      27, "[1m$"    
+    DIM_COL     db      27, "[2m$"
+    CLS         db      27, "[2J$"    
+    RESET_COL   db      27, "[0m$"   
+
+    text3        db " Bright Yellow on Black$"
+ 
 	
 	.code
 start:
     mov ax,@data
     mov ds,ax               ; ustaw segment danych
+    mov ah, 09h             
+    lea dx, [CLS]           ; wyczyszczenie ekranu
+    int 21h
+    mov ah, 2h              
+    mov dh, 12               ; usttawienie wiersza 
+    mov dl, 40               ; ustawienie kolumny
+    int 10h
     loop1:
         xor ax, ax
         mov ah, 8h 			; funkcja odczytu znaku z klawiatury bez echa i zapisu do rejestru al
@@ -38,44 +54,48 @@ start:
         je right
     jmp loop1               ; jeśli wciśnięty klawisz inny niż enter skocz do etykiety petla
 
-; rysowanie gwiazdkek za pomocą kursora:
+; rysowanie za pomocą kursora:
     up:
         call read 
         mov ah, 2h
         dec dh
         int 10h
-        dec dl
-        int 10h
-        lea dx, [RED_BG]
-        call set_bg_color
-        call star
+        lea dx, [RED]
+        call set_color
+        call draw
         jmp loop1
     down:
         call read
         mov ah, 2h
         inc dh
         int 10h
-        dec dl
-        int 10h
-        lea dx, [BLUE_BG]
-        call set_bg_color
-        call star
+        lea dx, [BLUE]
+        call set_color
+        call draw
         jmp loop1
     left:
         call read
-        sub dl, 2h
+        dec dl
         mov ah, 2h
         int 10h
-        lea dx, [YELLOW_BG]
-        call set_bg_color
-        call star
+        lea dx, [BRIGHT_COL]
+        call set_color
+        lea dx, [YELLOW]
+        call set_color
+        call draw
+        lea dx, [RESET_COL]
+        call set_color
         jmp loop1
     right:
         call read
-        lea dx, [GREEN_BG]
-        call set_bg_color
-        call star
+        inc dl
+        mov ah, 2h
+        int 10h
+        lea dx, [GREEN]
+        call set_color
+        call draw
         jmp loop1
+
 
     koniec:
         mov	ax, 4c00h		; funkja zakończenia programu
@@ -89,20 +109,23 @@ start:
     read endp
 
 ; procedura ustawiania koloru tła
-    set_bg_color proc
+    set_color proc
         mov ah, 09h
         int 21h
         ret
-    set_bg_color endp
+    set_color endp
 
-; procedura rysowania gwiazdki
-    star proc
-        mov ah, 09h
+; procedura rysowania 
+    draw proc
         xor dx, dx
         mov ah, 02h
-        mov dl, ' '         ; wypisz spacje
+        mov dl, 219         ; rysuj tło
         int 21h
+        call read 
+        mov ah, 2h
+        dec dl
+        int 10h
         ret
-    star endp
-    
+    draw endp
+
 end start

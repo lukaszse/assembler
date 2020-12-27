@@ -8,11 +8,19 @@ DOSSEG
     LEFT_KEY    equ     4bh
     RIGHT_KEY   equ     4dh
     RED         db      27, "[31m$"
+    CLS         db      27, "[2J$"    
 	
 	.code
 start:
     mov ax,@data
     mov ds,ax               ; ustaw segment danych
+    mov ah, 09h
+    lea dx, [cls]
+    int 21h
+    mov ah, 2h              
+    mov dh, 12               ; usttawienie wiersza 
+    mov dl, 40               ; ustawienie kolumny
+    int 10h
     loop1:
         xor ax, ax
         mov ah, 8h 			; funkcja odczytu znaku z klawiatury bez echa i zapisu do rejestru al
@@ -51,6 +59,10 @@ start:
         mov ah, 02h
         mov dl, '*'         ; wypisz gwiazdke
         int 21h
+        call read 
+        mov ah, 2h
+        dec dl
+        int 10h
         ret
     star endp
 
@@ -60,8 +72,6 @@ start:
         mov ah, 2h
         dec dh
         int 10h
-        dec dl
-        int 10h
         call star
         jmp loop1
     down:
@@ -69,19 +79,20 @@ start:
         mov ah, 2h
         inc dh
         int 10h
-        dec dl
-        int 10h
         call star
         jmp loop1
     left:
         call read
-        sub dl, 2h
+        dec dl
         mov ah, 2h
         int 10h
         call star
         jmp loop1
     right:
         call read
+        inc dl
+        mov ah, 2h
+        int 10h
         call star
         jmp loop1
 
