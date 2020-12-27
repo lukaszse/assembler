@@ -265,6 +265,7 @@ start:
         ret
     F9_proc endp
 
+; procedura zmiany trybu (toggle)
     space_proc proc
         mov bl, byte ptr ds:[MODE]
         cmp bl, 0
@@ -277,7 +278,6 @@ start:
             mov byte ptr ds:[MODE], bl
             ret
     space_proc endp
-
         
 ; procedura odczytu pozycji kursora
     read proc   
