@@ -13,7 +13,6 @@ start:
     mov ax,@data
     mov ds,ax               ; ustaw segment danych
     loop1:
-        call read
         xor ax, ax
         mov ah, 8h 			; funkcja odczytu znaku z klawiatury bez echa i zapisu do rejestru al
         int 21h				; przerwanie dos
@@ -41,26 +40,43 @@ start:
         ret                 ; powrót
     read endp
 
-; sterowanie kursorem:
-    up: 
-        dec dh
+; procedura rysowania gwiazdki
+    star proc
+        mov dl, '*'
+        mov ah, 02h
+        int 21h
+        ret
+    star endp
+
+; rysowanie gwiazdkek za pomocą kursora:
+    up:
+        call read 
         mov ah, 2h
+        dec dh
         int 10h
+        dec dl
+        int 10h
+        call star
         jmp loop1
     down:
-        inc dh
+        call read
         mov ah, 2h
+        inc dh
         int 10h
+        dec dl
+        int 10h
+        call star
         jmp loop1
     left:
-        dec dl
+        call read
+        sub dl, 2h
         mov ah, 2h
         int 10h
+        call star
         jmp loop1
     right:
-        inc dl
-        mov ah, 2h
-        int 10h
+        call read
+        call star
         jmp loop1
 
     koniec:
