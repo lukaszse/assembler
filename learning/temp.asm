@@ -9,7 +9,7 @@ rys_lpoz		macro	wiersz, od_kolumny, do_kolumny, kolor
 	mov	cx,	od_kolumny		;zacznij od kolumny
 	mov	dx,	wiersz			;wiersz
 linia_poz:	
-	int		10h				;wywołanie przerwania
+	int		10h			;wywołanie przerwania
 	inc	cx				;przejscie do następnej kolumny
 	cmp	cx,	do_kolumny		;rysuj do kolumny
 	jle	linia_poz
@@ -49,8 +49,9 @@ new_vec		dw	?, ?
 old_vec		dw	?, ?
 wysokosc_cyfry  dw      50
 wysokosc_temp   dw      50
-szerokosc_cyfry dw      30
+szerkosc_cyfry  dw      30
 szerokosc_temp  dw      30
+
 .code
 
 konwertuj_na_ascii      proc
@@ -81,8 +82,7 @@ pobierz_czas        endp
 
 
 pobierz_date	proc
-;pobranie daty i pzechowanie  w pamięci
-
+;pobranie daty i pzechowanie jej  w pamięci
         mov     ah,     2ah     	;funkcja pobrania daty z zegara systemowego
         int 	21h                	;cx = rok, dh = miesiac, dl = dzien
         xor     ax,     ax
@@ -123,52 +123,52 @@ time_int	proc
 	mov 	byte ptr ds:kolor_temp, al
 	pop 	ax
 	inc 	kolor
-	mov	skocz_do_wier,	55
+	mov	skocz_do_wier,	40
 	mov	skocz_do_kol,	30
-		call	rysuj_czarne_tlo
+	call	rysuj_czarne_tlo
         mov     si, 0
         call    drukuj_cyfre
 ;wypisz druga cyfre godziny
 	inc 	kolor
-	mov	skocz_do_wier,	55
+	mov	skocz_do_wier,	40
 	mov	skocz_do_kol,	70
 	call	rysuj_czarne_tlo
         mov     si, 1
         call    drukuj_cyfre
 ;wypisz separator
 	inc 	kolor
-	mov	skocz_do_wier,	55
+	mov	skocz_do_wier,	40
 	mov	skocz_do_kol,	100
 	call	rysuj_separator
 ;wypisz pierwszą cyfrę minut
 	inc 	kolor
-	mov	skocz_do_wier,	55
+	mov	skocz_do_wier,	40
 	mov	skocz_do_kol,	120
 	call	rysuj_czarne_tlo
         mov     si, 2
         call    drukuj_cyfre
 ;wypisz drugą cyfrę minut
 	inc 	kolor
-	mov	skocz_do_wier,	55
+	mov	skocz_do_wier,	40
 	mov	skocz_do_kol,	160
 	call	rysuj_czarne_tlo
         mov     si, 3
         call    drukuj_cyfre
 ;wypisz separator
 	inc 	kolor
-	mov	skocz_do_wier,	55
+	mov	skocz_do_wier,	40
 	mov	skocz_do_kol,	190
 	call	rysuj_separator
 ;wypisz ppierwszą cyfrę sekund
 	inc 	kolor
-	mov	skocz_do_wier,	55
+	mov	skocz_do_wier,	40
 	mov	skocz_do_kol,	210
 	call	rysuj_czarne_tlo
         mov     si, 4
         call    drukuj_cyfre
 ;wypisz drugą cyfrę sekund
 	inc 	kolor
-	mov	skocz_do_wier,	55
+	mov	skocz_do_wier,	40
 	mov	skocz_do_kol,	250
 	call	rysuj_czarne_tlo
         mov     si, 5
@@ -181,18 +181,17 @@ time_int	proc
 	pop 	ax
 ;zmiana na bufor daty
 	pop 	bx
-
-;zmiana wielkosci znaku
-        push 	ax
-	mov 	ax, word ptr ds:szerokosc_cyfry
-	mov 	word ptr ds:szerokosc_temp, ax
-	pop 	ax
-        push 	ax
-	mov 	ax, word ptr ds:wysokosc_cyfry
-	mov 	word ptr ds:wysokosc_temp, ax
-	pop 	ax
-        mov     szerokosc_cyfry,        7
-        mov     wysokosc_cyfry,         14
+; ;zmiana wielkosci znaku
+;       push 	ax
+; 	mov 	ax, word ptr ds:szerokosc_cyfry
+; 	mov 	word ptr ds:szerokosc_temp, ax
+; 	pop 	ax
+;       push 	ax
+; 	mov 	ax, word ptr ds:wysokosc_cyfry
+; 	mov 	word ptr ds:wysokosc_temp, ax
+; 	pop 	ax
+;       mov     szerokosc_cyfry, 15
+;       mov     wysokosc_cyfry, 26
 
 ;wypisz pierwszą cyfre roku
 	push 	ax
@@ -202,71 +201,71 @@ time_int	proc
         mov     kolor, 45
 
 	inc 	kolor
-	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	170
+	mov	skocz_do_wier,	105
+	mov	skocz_do_kol,	30
 		call	rysuj_czarne_tlo
         mov     si, 0
         call    drukuj_cyfre
 ;wypisz druga cyfre roku
 	inc 	kolor
-	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	185
+	mov	skocz_do_wier,	105
+	mov	skocz_do_kol,	70
 	call	rysuj_czarne_tlo
         mov     si, 1
         call    drukuj_cyfre
 ;wypisz separator
 	inc 	kolor
-	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	200
-	;call	rysuj_kropke
+	mov	skocz_do_wier,	105
+	mov	skocz_do_kol,	100
+	call	rysuj_kropke
 ;wypisz pierwszą cyfrę miesiaca
 	inc 	kolor
-	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	215
+	mov	skocz_do_wier,	105
+	mov	skocz_do_kol,	120
 	call	rysuj_czarne_tlo
         mov     si, 2
         call    drukuj_cyfre
 ;wypisz drugą cyfrę miesiaca
 	inc 	kolor
-	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	230
+	mov	skocz_do_wier,	105
+	mov	skocz_do_kol,	160
 	call	rysuj_czarne_tlo
         mov     si, 3
         call    drukuj_cyfre
 ;wypisz miesiaca
 	inc 	kolor
-	mov	skocz_do_wier,	205
-	mov	skocz_do_kol,	245
-	;call	rysuj_kropke
+	mov	skocz_do_wier,	105
+	mov	skocz_do_kol,	190
+	call	rysuj_kropke
 ;wypisz pierwszą cyfrę dnia
 	inc 	kolor
-	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	260
+	mov	skocz_do_wier,	105
+	mov	skocz_do_kol,	210
 	call	rysuj_czarne_tlo
         mov     si, 4
         call    drukuj_cyfre
 ;wypisz drugą cyfrę dnia
 	inc 	kolor
-	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	275
+	mov	skocz_do_wier,	105
+	mov	skocz_do_kol,	250
 	call	rysuj_czarne_tlo
         mov     si, 5
         call    drukuj_cyfre
 
-;przywrocenie koloru poczatkowegi
+;przywrocenie koloru poczatkowego
 	push 	ax
 	mov 	al, byte ptr ds:kolor_temp
 	mov 	byte ptr ds:kolor, al
 
-;przywrocenie standardowej wielkosci znaku
-        push 	ax
-	mov 	ax, word ptr ds:szerokosc_temp
-	mov 	word ptr ds:szerokosc_cyfry, ax
-	pop 	ax
-        push 	ax
-	mov 	ax, word ptr ds:wysokosc_temp
-	mov 	word ptr ds:wysokosc_cyfry, ax
-	pop 	ax
+; ;przywrocenie standardowej wielkosci znaku
+;       push 	ax
+; 	mov 	ax, word ptr ds:szerokosc_temp
+; 	mov 	word ptr ds:szerokosc_cyfry, ax
+; 	pop 	ax
+;       push 	ax
+; 	mov 	ax, word ptr ds:wysokosc_temp
+; 	mov 	word ptr ds:wysokosc_cyfry, ax
+; 	pop 	ax
 
 	pop 	ax
 	pop	ds
@@ -373,37 +372,12 @@ start:
 			mov		al,		3
 			int		10h
 ;wyjscie z programu
-            mov     ah,     4ch
-            int 	21h
+            mov     ah,         4ch
+            int 	        21h
 
 
 wypisz0		proc
-
-	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	0
-	add		linia_lewa,	ax
-        push            ax
-        mov             ax,             szerokosc_cyfry
-	mov		linia_prawa,	ax
-        pop             ax
-	add		linia_prawa,	ax
-	mov		ax,		skocz_do_wier
-	mov		linia_gorna,	0
-	add		linia_gorna,	ax
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        push            bx
-        push            dx
-        xor             dx,             dx
-        mov             bx,             2
-        div             bx
-	mov		linia_srodkowa,	ax
-        pop             dx
-        pop             bx
-        pop             ax
-	add		linia_srodkowa,	ax
-	add		linia_dolna,	ax
+        call wielkosc_znaku
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_dolna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpion	linia_lewa,	linia_gorna,	linia_dolna,	kolor
@@ -412,64 +386,14 @@ wypisz0		proc
 wypisz0		endp
 
 wypisz1		proc
-
-	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	20
-	add		linia_lewa,	ax
-        push            ax
-        mov             ax,             szerokosc_cyfry
-	mov		linia_prawa,	ax
-        pop             ax
-	add		linia_prawa,	ax
-	mov		ax,		skocz_do_wier
-	mov		linia_gorna,	0
-	add		linia_gorna,	ax
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        push            bx
-        push            dx
-        xor             dx,             dx
-        mov             bx,             2
-        div             bx
-	mov		linia_srodkowa,	ax
-        pop             dx
-        pop             bx
-        pop             ax
-	add		linia_srodkowa,	ax
-	add		linia_dolna,	ax
+        call wielkosc_znaku
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpion	linia_prawa,	linia_gorna,	linia_dolna,	kolor
 	ret
 wypisz1		endp
 
 wypisz2		proc
-
-	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	0
-	add		linia_lewa,	ax
-        push            ax
-        mov             ax,             szerokosc_cyfry
-	mov		linia_prawa,	ax
-        pop             ax
-	add		linia_prawa,	ax
-	mov		ax,		skocz_do_wier
-	mov		linia_gorna,	0
-	add		linia_gorna,	ax
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        push            bx
-        push            dx
-        xor             dx,             dx
-        mov             bx,             2
-        div             bx
-	mov		linia_srodkowa,	ax
-        pop             dx
-        pop             bx
-        pop             ax
-	add		linia_srodkowa,	ax
-	add		linia_dolna,	ax
+        call wielkosc_znaku
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_dolna,	linia_lewa,	linia_prawa,	kolor
@@ -479,32 +403,7 @@ wypisz2		proc
 wypisz2		endp
 
 wypisz3		proc
-
-	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	0
-	add		linia_lewa,	ax
-        push            ax
-        mov             ax,             szerokosc_cyfry
-	mov		linia_prawa,	ax
-        pop             ax
-	add		linia_prawa,	ax
-	mov		ax,		skocz_do_wier
-	mov		linia_gorna,	0
-	add		linia_gorna,	ax
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        push            bx
-        push            dx
-        xor             dx,             dx
-        mov             bx,             2
-        div             bx
-	mov		linia_srodkowa,	ax
-        pop             dx
-        pop             bx
-        pop             ax
-	add		linia_srodkowa,	ax
-	add		linia_dolna,	ax
+        call wielkosc_znaku
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_dolna,	linia_lewa,	linia_prawa,	kolor
@@ -514,31 +413,7 @@ wypisz3		proc
 wypisz3		endp
 
 wypisz4		proc
-	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	0
-	add		linia_lewa,	ax
-        push            ax
-        mov             ax,             szerokosc_cyfry
-	mov		linia_prawa,	ax
-        pop             ax
-	add		linia_prawa,	ax
-	mov		ax,		skocz_do_wier
-	mov		linia_gorna,	0
-	add		linia_gorna,	ax
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        push            bx
-        push            dx
-        xor             dx,             dx
-        mov             bx,             2
-        div             bx
-	mov		linia_srodkowa,	ax
-        pop             dx
-        pop             bx
-        pop             ax
-	add		linia_srodkowa,	ax
-	add		linia_dolna,	ax
+        call wielkosc_znaku
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
 	rys_lpion	linia_lewa,	linia_gorna,	linia_srodkowa,	kolor
 	rys_lpion	linia_prawa,	linia_gorna,	linia_dolna,	kolor
@@ -546,32 +421,7 @@ wypisz4		proc
 wypisz4		endp
 
 wypisz5		proc
-
-	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	0
-	add		linia_lewa,	ax
-        push            ax
-        mov             ax,             szerokosc_cyfry
-	mov		linia_prawa,	ax
-        pop             ax
-	add		linia_prawa,	ax
-	mov		ax,		skocz_do_wier
-	mov		linia_gorna,	0
-	add		linia_gorna,	ax
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        push            bx
-        push            dx
-        xor             dx,             dx
-        mov             bx,             2
-        div             bx
-	mov		linia_srodkowa,	ax
-        pop             dx
-        pop             bx
-        pop             ax
-	add		linia_srodkowa,	ax
-	add		linia_dolna,	ax
+        call wielkosc_znaku
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
  	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_dolna,	linia_lewa,	linia_prawa,	kolor
@@ -581,32 +431,7 @@ wypisz5		proc
 wypisz5		endp
 
 wypisz6		proc
-
-		mov		ax,		skocz_do_kol
-	mov		linia_lewa,	0
-	add		linia_lewa,	ax
-        push            ax
-        mov             ax,             szerokosc_cyfry
-	mov		linia_prawa,	ax
-        pop             ax
-	add		linia_prawa,	ax
-	mov		ax,		skocz_do_wier
-	mov		linia_gorna,	0
-	add		linia_gorna,	ax
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        push            bx
-        push            dx
-        xor             dx,             dx
-        mov             bx,             2
-        div             bx
-	mov		linia_srodkowa,	ax
-        pop             dx
-        pop             bx
-        pop             ax
-	add		linia_srodkowa,	ax
-	add		linia_dolna,	ax
+        call wielkosc_znaku
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_dolna,	linia_lewa,	linia_prawa,	kolor
@@ -616,64 +441,14 @@ wypisz6		proc
 wypisz6		endp
 
 wypisz7		proc
-
-	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	0
-	add		linia_lewa,	ax
-        push            ax
-        mov             ax,             szerokosc_cyfry
-	mov		linia_prawa,	ax
-        pop             ax
-	add		linia_prawa,	ax
-	mov		ax,		skocz_do_wier
-	mov		linia_gorna,	0
-	add		linia_gorna,	ax
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        push            bx
-        push            dx
-        xor             dx,             dx
-        mov             bx,             2
-        div             bx
-	mov		linia_srodkowa,	ax
-        pop             dx
-        pop             bx
-        pop             ax
-	add		linia_srodkowa,	ax
-	add		linia_dolna,	ax
+        call wielkosc_znaku
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpion	linia_prawa,	linia_gorna,	linia_dolna,	kolor
 	ret
 wypisz7		endp
 
 wypisz8		proc
-
-	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	0
-	add		linia_lewa,	ax
-        push            ax
-        mov             ax,             szerokosc_cyfry
-	mov		linia_prawa,	ax
-        pop             ax
-	add		linia_prawa,	ax
-	mov		ax,		skocz_do_wier
-	mov		linia_gorna,	0
-	add		linia_gorna,	ax
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        push            bx
-        push            dx
-        xor             dx,             dx
-        mov             bx,             2
-        div             bx
-	mov		linia_srodkowa,	ax
-        pop             dx
-        pop             bx
-        pop             ax
-	add		linia_srodkowa,	ax
-	add		linia_dolna,	ax
+        call wielkosc_znaku
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_dolna,	linia_lewa,	linia_prawa,	kolor
@@ -684,32 +459,7 @@ wypisz8		proc
 wypisz8		endp
 
 wypisz9		proc
-
-	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	0
-	add		linia_lewa,	ax
-        push            ax
-        mov             ax,             szerokosc_cyfry
-	mov		linia_prawa,	ax
-        pop             ax
-	add		linia_prawa,	ax
-	mov		ax,		skocz_do_wier
-	mov		linia_gorna,	0
-	add		linia_gorna,	ax
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        push            bx
-        push            dx
-        xor             dx,             dx
-        mov             bx,             2
-        div             bx
-	mov		linia_srodkowa,	ax
-        pop             dx
-        pop             bx
-        pop             ax
-	add		linia_srodkowa,	ax
-	add		linia_dolna,	ax
+        call wielkosc_znaku
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_dolna,	linia_lewa,	linia_prawa,	kolor
@@ -755,20 +505,17 @@ rysuj_separator			endp
 rysuj_kropke		proc
 
 	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	2
+	mov		linia_lewa,	9
 	add		linia_lewa,	ax
-	mov		linia_prawa,	4
+	mov		linia_prawa,	11
 	add		linia_prawa,	ax
 	mov		ax,		skocz_do_wier
-	
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        pop             ax
-
+	mov		linia_gorna,	50
 	add		linia_gorna,	ax
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
         inc     	linia_gorna
+        rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
+        inc    	 	linia_gorna
         rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 
 	ret
@@ -778,8 +525,59 @@ rysuj_czarne_tlo	proc
 	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	0
 	add		linia_lewa,	ax
+	mov		linia_prawa,	30
+	add		linia_prawa,	ax
+	mov		ax,		skocz_do_wier
+	mov		linia_gorna,	0
+	add		linia_gorna,	ax
+	mov		linia_srodkowa,	25
+	add		linia_srodkowa,	ax
+	mov		linia_dolna,	50
+	add		linia_dolna,	ax
+	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	0
+	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	0
+	rys_lpoz	linia_dolna,	linia_lewa,	linia_prawa,	0
+	rys_lpion	linia_lewa,	linia_gorna,	linia_dolna,	0
+	rys_lpion	linia_prawa,	linia_gorna,	linia_dolna,	0
+
+	ret
+rysuj_czarne_tlo	endp
+
+; wielkosc_znaku          proc
+; 	mov		ax,		skocz_do_kol
+; 	mov		linia_lewa,	0
+; 	add		linia_lewa,	ax
+;         push            ax
+;         mov             ax,             szerkosc_cyfry
+; 	mov		linia_prawa,	ax
+;         pop             ax
+; 	add		linia_prawa,	ax
+; 	mov		ax,		skocz_do_wier
+; 	mov		linia_gorna,	0
+; 	add		linia_gorna,	ax
+;         push            ax
+;         mov             ax,             wysokosc_cyfry
+; 	mov		linia_dolna,	ax
+;         push            bx
+;         push            dx
+;         xor             dx,             dx
+;         mov             bx,             2
+;         div             bx
+; 	mov		linia_srodkowa,	ax
+;         pop             dx
+;         pop             bx
+;         pop             ax
+; 	add		linia_srodkowa,	ax
+; 	add		linia_dolna,	ax
+;         ret
+; wielkosc_znaku          endp
+
+wielkosc_znaku          proc
+	mov		ax,		skocz_do_kol
+	mov		linia_lewa,	0
+	add		linia_lewa,	ax
         push            ax
-        mov             ax,             szerokosc_cyfry
+        mov             ax,             szerkosc_cyfry
 	mov		linia_prawa,	ax
         pop             ax
 	add		linia_prawa,	ax
@@ -800,13 +598,8 @@ rysuj_czarne_tlo	proc
         pop             ax
 	add		linia_srodkowa,	ax
 	add		linia_dolna,	ax
-	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	0
-	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	0
-	rys_lpoz	linia_dolna,	linia_lewa,	linia_prawa,	0
-	rys_lpion	linia_lewa,	linia_gorna,	linia_dolna,	0
-	rys_lpion	linia_prawa,	linia_gorna,	linia_dolna,	0
+        ret
+wielkosc_znaku          endp
 
-	ret
-rysuj_czarne_tlo	endp
 
 end start
