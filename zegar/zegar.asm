@@ -9,7 +9,7 @@ rys_lpoz		macro	wiersz, od_kolumny, do_kolumny, kolor
 	mov	cx,	od_kolumny		;zacznij od kolumny
 	mov	dx,	wiersz			;wiersz
 linia_poz:	
-	int		10h				;wywołanie przerwania
+	int	10h			        ;wywołanie przerwania
 	inc	cx				;przejscie do następnej kolumny
 	cmp	cx,	do_kolumny		;rysuj do kolumny
 	jle	linia_poz
