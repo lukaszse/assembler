@@ -47,8 +47,8 @@ time_buf	db	'000000$'
 date_buf	db	'000000$'
 new_vec		dw	?, ?
 old_vec		dw	?, ?
-wysokosc_cyfry  db      50
-szerkosc_cyfry  db      30
+wysokosc_cyfry  dw      50
+szerkosc_cyfry  dw      30
 .code
 
 konwertuj_na_ascii      proc
@@ -357,17 +357,30 @@ start:
 
 wypisz0		proc
 
-	mov		ax,			skocz_do_kol
+	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	0
 	add		linia_lewa,	ax
-	mov		linia_prawa,	30
+        push            ax
+        mov             ax,             szerkosc_cyfry
+	mov		linia_prawa,	ax
+        pop             ax
 	add		linia_prawa,	ax
-	mov		ax,			skocz_do_wier
+	mov		ax,		skocz_do_wier
 	mov		linia_gorna,	0
 	add		linia_gorna,	ax
-	mov		linia_srodkowa,	25
+        push            ax
+        mov             ax,             wysokosc_cyfry
+	mov		linia_dolna,	ax
+        push            bx
+        push            dx
+        xor             dx,             dx
+        mov             bx,             2
+        div             bx
+	mov		linia_srodkowa,	ax
+        pop             dx
+        pop             bx
+        pop             ax
 	add		linia_srodkowa,	ax
-	mov		linia_dolna,	50
 	add		linia_dolna,	ax
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_dolna,	linia_lewa,	linia_prawa,	kolor
@@ -378,17 +391,30 @@ wypisz0		endp
 
 wypisz1		proc
 
-	mov		ax,			skocz_do_kol
+	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	20
 	add		linia_lewa,	ax
-	mov		linia_prawa,	30
+        push            ax
+        mov             ax,             szerkosc_cyfry
+	mov		linia_prawa,	ax
+        pop             ax
 	add		linia_prawa,	ax
-	mov		ax,			skocz_do_wier
+	mov		ax,		skocz_do_wier
 	mov		linia_gorna,	0
 	add		linia_gorna,	ax
-	mov		linia_srodkowa,	25
+        push            ax
+        mov             ax,             wysokosc_cyfry
+	mov		linia_dolna,	ax
+        push            bx
+        push            dx
+        xor             dx,             dx
+        mov             bx,             2
+        div             bx
+	mov		linia_srodkowa,	ax
+        pop             dx
+        pop             bx
+        pop             ax
 	add		linia_srodkowa,	ax
-	mov		linia_dolna,	50
 	add		linia_dolna,	ax
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpion	linia_prawa,	linia_gorna,	linia_dolna,	kolor
@@ -397,17 +423,30 @@ wypisz1		endp
 
 wypisz2		proc
 
-	mov		ax,			skocz_do_kol
+	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	0
 	add		linia_lewa,	ax
-	mov		linia_prawa,	30
+        push            ax
+        mov             ax,             szerkosc_cyfry
+	mov		linia_prawa,	ax
+        pop             ax
 	add		linia_prawa,	ax
-	mov		ax,			skocz_do_wier
+	mov		ax,		skocz_do_wier
 	mov		linia_gorna,	0
 	add		linia_gorna,	ax
-	mov		linia_srodkowa,	25
+        push            ax
+        mov             ax,             wysokosc_cyfry
+	mov		linia_dolna,	ax
+        push            bx
+        push            dx
+        xor             dx,             dx
+        mov             bx,             2
+        div             bx
+	mov		linia_srodkowa,	ax
+        pop             dx
+        pop             bx
+        pop             ax
 	add		linia_srodkowa,	ax
-	mov		linia_dolna,	50
 	add		linia_dolna,	ax
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
@@ -419,17 +458,30 @@ wypisz2		endp
 
 wypisz3		proc
 
-	mov		ax,			skocz_do_kol
+	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	0
 	add		linia_lewa,	ax
-	mov		linia_prawa,	30
+        push            ax
+        mov             ax,             szerkosc_cyfry
+	mov		linia_prawa,	ax
+        pop             ax
 	add		linia_prawa,	ax
-	mov		ax,			skocz_do_wier
+	mov		ax,		skocz_do_wier
 	mov		linia_gorna,	0
 	add		linia_gorna,	ax
-	mov		linia_srodkowa,	25
+        push            ax
+        mov             ax,             wysokosc_cyfry
+	mov		linia_dolna,	ax
+        push            bx
+        push            dx
+        xor             dx,             dx
+        mov             bx,             2
+        div             bx
+	mov		linia_srodkowa,	ax
+        pop             dx
+        pop             bx
+        pop             ax
 	add		linia_srodkowa,	ax
-	mov		linia_dolna,	50
 	add		linia_dolna,	ax
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
@@ -443,14 +495,27 @@ wypisz4		proc
 	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	0
 	add		linia_lewa,	ax
-	mov		linia_prawa,	30
+        push            ax
+        mov             ax,             szerkosc_cyfry
+	mov		linia_prawa,	ax
+        pop             ax
 	add		linia_prawa,	ax
 	mov		ax,		skocz_do_wier
 	mov		linia_gorna,	0
 	add		linia_gorna,	ax
-	mov		linia_srodkowa,	25
+        push            ax
+        mov             ax,             wysokosc_cyfry
+	mov		linia_dolna,	ax
+        push            bx
+        push            dx
+        xor             dx,             dx
+        mov             bx,             2
+        div             bx
+	mov		linia_srodkowa,	ax
+        pop             dx
+        pop             bx
+        pop             ax
 	add		linia_srodkowa,	ax
-	mov		linia_dolna,	50
 	add		linia_dolna,	ax
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
 	rys_lpion	linia_lewa,	linia_gorna,	linia_srodkowa,	kolor
@@ -460,17 +525,30 @@ wypisz4		endp
 
 wypisz5		proc
 
- 	mov		ax,		skocz_do_kol
+	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	0
 	add		linia_lewa,	ax
-	mov		linia_prawa,	30
+        push            ax
+        mov             ax,             szerkosc_cyfry
+	mov		linia_prawa,	ax
+        pop             ax
 	add		linia_prawa,	ax
 	mov		ax,		skocz_do_wier
 	mov		linia_gorna,	0
 	add		linia_gorna,	ax
-	mov		linia_srodkowa,	25
+        push            ax
+        mov             ax,             wysokosc_cyfry
+	mov		linia_dolna,	ax
+        push            bx
+        push            dx
+        xor             dx,             dx
+        mov             bx,             2
+        div             bx
+	mov		linia_srodkowa,	ax
+        pop             dx
+        pop             bx
+        pop             ax
 	add		linia_srodkowa,	ax
-	mov		linia_dolna,	50
 	add		linia_dolna,	ax
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
  	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
@@ -482,17 +560,30 @@ wypisz5		endp
 
 wypisz6		proc
 
-	mov		ax,		skocz_do_kol
+		mov		ax,		skocz_do_kol
 	mov		linia_lewa,	0
 	add		linia_lewa,	ax
-	mov		linia_prawa,	30
+        push            ax
+        mov             ax,             szerkosc_cyfry
+	mov		linia_prawa,	ax
+        pop             ax
 	add		linia_prawa,	ax
 	mov		ax,		skocz_do_wier
 	mov		linia_gorna,	0
 	add		linia_gorna,	ax
-	mov		linia_srodkowa,	25
+        push            ax
+        mov             ax,             wysokosc_cyfry
+	mov		linia_dolna,	ax
+        push            bx
+        push            dx
+        xor             dx,             dx
+        mov             bx,             2
+        div             bx
+	mov		linia_srodkowa,	ax
+        pop             dx
+        pop             bx
+        pop             ax
 	add		linia_srodkowa,	ax
-	mov		linia_dolna,	50
 	add		linia_dolna,	ax
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
@@ -507,14 +598,27 @@ wypisz7		proc
 	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	0
 	add		linia_lewa,	ax
-	mov		linia_prawa,	30
+        push            ax
+        mov             ax,             szerkosc_cyfry
+	mov		linia_prawa,	ax
+        pop             ax
 	add		linia_prawa,	ax
 	mov		ax,		skocz_do_wier
 	mov		linia_gorna,	0
 	add		linia_gorna,	ax
-	mov		linia_srodkowa,	25
+        push            ax
+        mov             ax,             wysokosc_cyfry
+	mov		linia_dolna,	ax
+        push            bx
+        push            dx
+        xor             dx,             dx
+        mov             bx,             2
+        div             bx
+	mov		linia_srodkowa,	ax
+        pop             dx
+        pop             bx
+        pop             ax
 	add		linia_srodkowa,	ax
-	mov		linia_dolna,	50
 	add		linia_dolna,	ax
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpion	linia_prawa,	linia_gorna,	linia_dolna,	kolor
@@ -526,14 +630,27 @@ wypisz8		proc
 	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	0
 	add		linia_lewa,	ax
-	mov		linia_prawa,	30
+        push            ax
+        mov             ax,             szerkosc_cyfry
+	mov		linia_prawa,	ax
+        pop             ax
 	add		linia_prawa,	ax
 	mov		ax,		skocz_do_wier
 	mov		linia_gorna,	0
 	add		linia_gorna,	ax
-	mov		linia_srodkowa,	25
+        push            ax
+        mov             ax,             wysokosc_cyfry
+	mov		linia_dolna,	ax
+        push            bx
+        push            dx
+        xor             dx,             dx
+        mov             bx,             2
+        div             bx
+	mov		linia_srodkowa,	ax
+        pop             dx
+        pop             bx
+        pop             ax
 	add		linia_srodkowa,	ax
-	mov		linia_dolna,	50
 	add		linia_dolna,	ax
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
@@ -549,14 +666,27 @@ wypisz9		proc
 	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	0
 	add		linia_lewa,	ax
-	mov		linia_prawa,	30
+        push            ax
+        mov             ax,             szerkosc_cyfry
+	mov		linia_prawa,	ax
+        pop             ax
 	add		linia_prawa,	ax
 	mov		ax,		skocz_do_wier
 	mov		linia_gorna,	0
 	add		linia_gorna,	ax
-	mov		linia_srodkowa,	25
+        push            ax
+        mov             ax,             wysokosc_cyfry
+	mov		linia_dolna,	ax
+        push            bx
+        push            dx
+        xor             dx,             dx
+        mov             bx,             2
+        div             bx
+	mov		linia_srodkowa,	ax
+        pop             dx
+        pop             bx
+        pop             ax
 	add		linia_srodkowa,	ax
-	mov		linia_dolna,	50
 	add		linia_dolna,	ax
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
 	rys_lpoz	linia_srodkowa,	linia_lewa,	linia_prawa,	kolor
