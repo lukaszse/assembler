@@ -51,6 +51,8 @@ wysokosc_cyfry  dw      50
 wysokosc_temp   dw      50
 szerokosc_cyfry dw      30
 szerokosc_temp  dw      30
+odstep          dw      20              
+odstep_temp     dw      20
 .code
 
 konwertuj_na_ascii      proc
@@ -167,7 +169,7 @@ time_int	proc
         mov     si, 4
         call    drukuj_cyfre
 ;wypisz drugą cyfrę sekund
-	inc 	kolor
+        add     kolor, 2
 	mov	skocz_do_wier,	55
 	mov	skocz_do_kol,	250
 	call	rysuj_czarne_tlo
@@ -191,8 +193,13 @@ time_int	proc
 	mov 	ax, word ptr ds:wysokosc_cyfry
 	mov 	word ptr ds:wysokosc_temp, ax
 	pop 	ax
+        push 	ax
+	mov 	ax, word ptr ds:odstep
+	mov 	word ptr ds:odstep_temp, ax
+	pop 	ax
         mov     szerokosc_cyfry,        7
         mov     wysokosc_cyfry,         14
+        mov     odstep,                 5
 
 ;wypisz pierwszą cyfre roku
 	push 	ax
@@ -218,7 +225,7 @@ time_int	proc
 	inc 	kolor
 	mov	skocz_do_wier,	120
 	mov	skocz_do_kol,	200
-	;call	rysuj_kropke
+	call	rysuj_kropke
 ;wypisz pierwszą cyfrę miesiaca
 	inc 	kolor
 	mov	skocz_do_wier,	120
@@ -235,9 +242,9 @@ time_int	proc
         call    drukuj_cyfre
 ;wypisz miesiaca
 	inc 	kolor
-	mov	skocz_do_wier,	205
+	mov	skocz_do_wier,	120
 	mov	skocz_do_kol,	245
-	;call	rysuj_kropke
+	call	rysuj_kropke
 ;wypisz pierwszą cyfrę dnia
 	inc 	kolor
 	mov	skocz_do_wier,	120
@@ -266,6 +273,10 @@ time_int	proc
         push 	ax
 	mov 	ax, word ptr ds:wysokosc_temp
 	mov 	word ptr ds:wysokosc_cyfry, ax
+	pop 	ax
+        push 	ax
+	mov 	ax, word ptr ds:[odstep_temp]
+	mov 	word ptr ds:[odstep], ax
 	pop 	ax
 
 	pop 	ax
@@ -414,7 +425,10 @@ wypisz0		endp
 wypisz1		proc
 
 	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	20
+        push            ax
+        mov             ax,             odstep
+	mov		linia_lewa,	ax
+        pop             ax
 	add		linia_lewa,	ax
         push            ax
         mov             ax,             szerokosc_cyfry
@@ -755,21 +769,17 @@ rysuj_separator			endp
 rysuj_kropke		proc
 
 	mov		ax,		skocz_do_kol
-	mov		linia_lewa,	2
+	mov		linia_lewa,	4
 	add		linia_lewa,	ax
-	mov		linia_prawa,	4
+	mov		linia_prawa,	5
 	add		linia_prawa,	ax
 	mov		ax,		skocz_do_wier
-	
-        push            ax
-        mov             ax,             wysokosc_cyfry
-	mov		linia_dolna,	ax
-        pop             ax
-
+	mov		linia_gorna,	14
 	add		linia_gorna,	ax
 	rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
         inc     	linia_gorna
         rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
+        inc     	linia_gorna
 
 	ret
 rysuj_kropke            endp	
