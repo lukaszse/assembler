@@ -44,7 +44,7 @@ linia_dolna	dw	0
 kolor		db	32
 kolor_temp	db	0
 time_buf	db	'000000$'
-date_buf	db	'000000$'
+date_buf	db	'00000000$'
 new_vec		dw	?, ?
 old_vec		dw	?, ?
 wysokosc_cyfry  dw      50
@@ -53,13 +53,14 @@ szerokosc_cyfry dw      30
 szerokosc_temp  dw      30
 odstep          dw      20              
 odstep_temp     dw      20
+msg             db      'Lukasz Seremak, Uniwersytet Slaski, Informatyka, sem. III gr C$'
 .code
 
 konwertuj_na_ascii      proc
 ; konwersja liczby dwucyfrowej na kod ASCII
         xor     ah,     ah      	;zerowanie ah
         mov     dl,     10      	;podzielenie przez 10
-        div     dl              	;a      h = reszta, al = wynik dzielenia
+        div     dl              	;ah = reszta, al = wynik dzielenia
         or      ax,     3030h   	;suma logiczna - zwraca dwucyfrowy wynik w kodzie ASCII
         ret
 konwertuj_na_ascii      endp
@@ -81,27 +82,32 @@ pobierz_czas	proc
         ret
 pobierz_czas        endp
 
-
 pobierz_date	proc
 ;pobranie daty i pzechowanie  w pamięci
 
         mov     ah,     2ah     	;funkcja pobrania daty z zegara systemowego
         int 	21h                	;cx = rok, dh = miesiac, dl = dzien
         xor     ax,     ax
+        add     ch,     0dh
+        mov     al,     ch      	;wiek 
+        push    dx
+	call	konwertuj_na_ascii
+        pop     dx         	
+        mov     [bx],   ax    	  	;zachowaj w buforze
         sub     cl,     30h
         mov     al,     cl      	;rok 
         push    dx
 	call	konwertuj_na_ascii
         pop     dx         	
-        mov     [bx],   ax    	  	;zachowaj w buforze
+        mov     [bx+2],   ax    	;zachowaj w buforze
         mov     al,     dh     	 	;miesiac
         push    dx
         call    konwertuj_na_ascii
         pop     dx         	
-        mov     [bx+2], ax     	 	;zachowaj w buforze
+        mov     [bx+4], ax     	 	;zachowaj w buforze
         mov     al,     dl      	;dzien
         call    konwertuj_na_ascii       	  	
-        mov     [bx+4], ax      	;zachowaj w buforze
+        mov     [bx+6], ax      	;zachowaj w buforze
 
         ret
 pobierz_date        endp
@@ -119,6 +125,7 @@ time_int	proc
 ;pobranie czasu
 	lea	bx,	time_buf	;ustawienie wskaźnika na bufor zegara w rejestrze bx
 	call	pobierz_czas		;pobranie czasu
+
 ;wypisz pierwszą cyfre godziny
 	push 	ax
 	mov 	al, byte ptr ds:kolor
@@ -126,52 +133,52 @@ time_int	proc
 	pop 	ax
 	inc 	kolor
 	mov	skocz_do_wier,	55
-	mov	skocz_do_kol,	30
+	mov	skocz_do_kol,	20
 		call	rysuj_czarne_tlo
         mov     si, 0
         call    drukuj_cyfre
 ;wypisz druga cyfre godziny
 	inc 	kolor
 	mov	skocz_do_wier,	55
-	mov	skocz_do_kol,	70
+	mov	skocz_do_kol,	60
 	call	rysuj_czarne_tlo
         mov     si, 1
         call    drukuj_cyfre
 ;wypisz separator
 	inc 	kolor
 	mov	skocz_do_wier,	55
-	mov	skocz_do_kol,	100
+	mov	skocz_do_kol,	90
 	call	rysuj_separator
 ;wypisz pierwszą cyfrę minut
 	inc 	kolor
 	mov	skocz_do_wier,	55
-	mov	skocz_do_kol,	120
+	mov	skocz_do_kol,	110
 	call	rysuj_czarne_tlo
         mov     si, 2
         call    drukuj_cyfre
 ;wypisz drugą cyfrę minut
 	inc 	kolor
 	mov	skocz_do_wier,	55
-	mov	skocz_do_kol,	160
+	mov	skocz_do_kol,	150
 	call	rysuj_czarne_tlo
         mov     si, 3
         call    drukuj_cyfre
 ;wypisz separator
 	inc 	kolor
 	mov	skocz_do_wier,	55
-	mov	skocz_do_kol,	190
+	mov	skocz_do_kol,	180
 	call	rysuj_separator
 ;wypisz ppierwszą cyfrę sekund
 	inc 	kolor
 	mov	skocz_do_wier,	55
-	mov	skocz_do_kol,	210
+	mov	skocz_do_kol,	200
 	call	rysuj_czarne_tlo
         mov     si, 4
         call    drukuj_cyfre
 ;wypisz drugą cyfrę sekund
         add     kolor, 2
 	mov	skocz_do_wier,	55
-	mov	skocz_do_kol,	250
+	mov	skocz_do_kol,	240
 	call	rysuj_czarne_tlo
         mov     si, 5
         call    drukuj_cyfre
@@ -201,63 +208,77 @@ time_int	proc
         mov     wysokosc_cyfry,         14
         mov     odstep,                 5
 
-;wypisz pierwszą cyfre roku
+
+;wypisz pierwszą cyfre wieku
 	push 	ax
 	mov 	al, byte ptr ds:kolor
 	mov 	byte ptr ds:kolor_temp, al
 	pop 	ax
         mov     kolor, 45
-
 	inc 	kolor
 	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	170
-		call	rysuj_czarne_tlo
+	mov	skocz_do_kol,	130
+	call	rysuj_czarne_tlo
         mov     si, 0
+        call    drukuj_cyfre
+;wypisz druga cyfre wieku
+	inc 	kolor
+	mov	skocz_do_wier,	120
+	mov	skocz_do_kol,	145
+	call	rysuj_czarne_tlo
+        mov     si, 1
+        call    drukuj_cyfre
+;wypisz pierwszą cyfre roku
+	inc 	kolor
+	mov	skocz_do_wier,	120
+	mov	skocz_do_kol,	160
+	call	rysuj_czarne_tlo
+        mov     si, 2
         call    drukuj_cyfre
 ;wypisz druga cyfre roku
 	inc 	kolor
 	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	185
+	mov	skocz_do_kol,	175
 	call	rysuj_czarne_tlo
-        mov     si, 1
+        mov     si, 3
         call    drukuj_cyfre
 ;wypisz separator
 	inc 	kolor
 	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	200
+	mov	skocz_do_kol,	190
 	call	rysuj_kropke
 ;wypisz pierwszą cyfrę miesiaca
 	inc 	kolor
 	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	215
+	mov	skocz_do_kol,	205
 	call	rysuj_czarne_tlo
-        mov     si, 2
+        mov     si, 4
         call    drukuj_cyfre
 ;wypisz drugą cyfrę miesiaca
 	inc 	kolor
 	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	230
+	mov	skocz_do_kol,	220
 	call	rysuj_czarne_tlo
-        mov     si, 3
+        mov     si, 5
         call    drukuj_cyfre
 ;wypisz miesiaca
 	inc 	kolor
 	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	245
+	mov	skocz_do_kol,	235
 	call	rysuj_kropke
 ;wypisz pierwszą cyfrę dnia
 	inc 	kolor
 	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	260
+	mov	skocz_do_kol,	250
 	call	rysuj_czarne_tlo
-        mov     si, 4
+        mov     si, 6
         call    drukuj_cyfre
 ;wypisz drugą cyfrę dnia
 	inc 	kolor
 	mov	skocz_do_wier,	120
-	mov	skocz_do_kol,	275
+	mov	skocz_do_kol,	265
 	call	rysuj_czarne_tlo
-        mov     si, 5
+        mov     si, 7
         call    drukuj_cyfre
 
 ;przywrocenie koloru poczatkowegi
@@ -333,10 +354,10 @@ drukuj_cyfre        proc
 	c9:	call	wypisz9
 	c1d:
     ret
-drukuj_cyfre endp
+drukuj_cyfre    endp
 
 
-setup_int           proc
+setup_int       proc
 ;zapisanie starego wektora i ustawienie nowego
 ;wejscie:	al = nr przerwania number
 ;			di = adres bufora dla starego vectora
@@ -354,7 +375,7 @@ setup_int           proc
 	int	21h
 	pop	ds			;poprabie ds ze stosu
 	ret
-setup_int			endp
+setup_int	endp
 
 start:
 	mov     ax,     @data
@@ -371,21 +392,25 @@ start:
 	lea	si,		new_vec				;ustawienie wskaznika do nowego wektora w si
 	mov	al,		1ch				;przerwanie zegara
 	call	setup_int					;wywolanie procedury przerwania
+
 ;odczyt z klawiatury
-	mov	ah,		0
-	int		16h
+	mov	ah,	0
+	int	16h
+
 ;przywrócenie starego wektora przerwania
 	lea	di,	new_vec					;ustawienie wskaznika na nowy wektor w di
 	lea	si,	old_vec					;ustawienie wskaznika na stary wektor w si
 	mov	al,	1ch					;przerwanie zegara
 	call	setup_int					;wywolanie procedurt przerwania
+
 ;przywrocenie trybu tekstoweggo
-			mov		ah,		0
-			mov		al,		3
-			int		10h
+	mov	ah,	0
+	mov	al,	3
+	int	10h
+
 ;wyjscie z programu
-            mov     ah,     4ch
-            int 	21h
+        mov     ah,    4ch
+        int      21h
 
 
 wypisz0		proc
@@ -747,8 +772,6 @@ rysuj_separator			proc
         rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
         inc    	 	linia_gorna
         rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
-
-
 	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	9
 	add		linia_lewa,	ax
@@ -780,11 +803,11 @@ rysuj_kropke		proc
         inc     	linia_gorna
         rys_lpoz	linia_gorna,	linia_lewa,	linia_prawa,	kolor
         inc     	linia_gorna
-
 	ret
 rysuj_kropke            endp	
 
 rysuj_czarne_tlo	proc
+
 	mov		ax,		skocz_do_kol
 	mov		linia_lewa,	0
 	add		linia_lewa,	ax
@@ -815,7 +838,6 @@ rysuj_czarne_tlo	proc
 	rys_lpoz	linia_dolna,	linia_lewa,	linia_prawa,	0
 	rys_lpion	linia_lewa,	linia_gorna,	linia_dolna,	0
 	rys_lpion	linia_prawa,	linia_gorna,	linia_dolna,	0
-
 	ret
 rysuj_czarne_tlo	endp
 
